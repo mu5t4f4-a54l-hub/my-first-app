@@ -29,7 +29,7 @@
         }
 
         body {
-            background-color: var(--bg-color);
+            background-color: #0a0a0f;
             color: var(--text-main);
             padding: max(env(safe-area-inset-top), 8px) 8px max(env(safe-area-inset-bottom), 8px) 8px;
             min-height: 100vh;
@@ -39,7 +39,7 @@
             position: relative;
         }
 
-        #ai-bg, #stars-bg, #galaxy-bg, #constellations-bg {
+        #galaxy-canvas {
             position: fixed;
             top: 0;
             left: 0;
@@ -48,11 +48,6 @@
             z-index: 0;
             pointer-events: none;
         }
-
-        #stars-bg { z-index: 1; }
-        #galaxy-bg { z-index: 2; }
-        #constellations-bg { z-index: 3; }
-        #ai-bg { z-index: 4; }
 
         .container {
             width: 100%;
@@ -265,14 +260,11 @@
     </style>
 </head>
 <body>
-<canvas id="stars-bg"></canvas>
-<canvas id="galaxy-bg"></canvas>
-<canvas id="constellations-bg"></canvas>
-<canvas id="ai-bg"></canvas>
+<canvas id="galaxy-canvas"></canvas>
 <div class="container">
     <header>
         <h1>تحويل العملات</h1>
-        <p>برنامج ذكي سريع بتصميم كوني احترافي</p>
+        <p>برنامج ذكي أمام درب التبانة السحرية</p>
     </header>
     <div class="grid">
         <div class="card">
@@ -334,199 +326,105 @@
 </div>
 
 <script>
-    // ===== النجوم الخلفية =====
-    const starsCanvas = document.getElementById('stars-bg');
-    const starsCtx = starsCanvas.getContext('2d');
-    const galaxyCanvas = document.getElementById('galaxy-bg');
-    const galaxyCtx = galaxyCanvas.getContext('2d');
-    const constellationsCanvas = document.getElementById('constellations-bg');
-    const consCtx = constellationsCanvas.getContext('2d');
-    const aiCanvas = document.getElementById('ai-bg');
-    const aiCtx = aiCanvas.getContext('2d');
-
-    let particles = [], ripples = [];
-    let mouse = { x: null, y: null, radius: 140 };
-
+    const canvas = document.getElementById('galaxy-canvas');
+    const ctx = canvas.getContext('2d');
+    
     function resizeCanvas() {
-        starsCanvas.width = galaxyCanvas.width = constellationsCanvas.width = aiCanvas.width = window.innerWidth;
-        starsCanvas.height = galaxyCanvas.height = constellationsCanvas.height = aiCanvas.height = window.innerHeight;
+        canvas.width = window.innerWidth;
+        canvas.height = window.innerHeight;
     }
     window.addEventListener('resize', resizeCanvas);
     resizeCanvas();
 
-    // رسم النجوم الثابتة
-    function drawStars() {
-        starsCtx.clearRect(0, 0, starsCanvas.width, starsCanvas.height);
-        for (let i = 0; i < 300; i++) {
-            const x = Math.sin(i) * starsCanvas.width + starsCanvas.width / 2;
-            const y = Math.cos(i * 0.5) * starsCanvas.height + starsCanvas.height / 2;
-            const size = Math.random() * 1.5;
-            const opacity = Math.random() * 0.7 + 0.3;
-            starsCtx.fillStyle = `rgba(255, 255, 255, ${opacity})`;
-            starsCtx.beginPath();
-            starsCtx.arc(x % starsCanvas.width, y % starsCanvas.height, size, 0, Math.PI * 2);
-            starsCtx.fill();
-        }
-    }
+    let rotation = 0;
 
-    // رسم درب التبانة والمجرات
-    let galaxyRotation = 0;
-    function drawGalaxy() {
-        galaxyCtx.clearRect(0, 0, galaxyCanvas.width, galaxyCanvas.height);
-        galaxyRotation += 0.0002;
+    function drawMilkyWay() {
+        // خلفية سوداء نقية
+        ctx.fillStyle = '#0a0a0f';
+        ctx.fillRect(0, 0, canvas.width, canvas.height);
 
-        // مجرة درب التبانة (الرئيسية)
-        drawGalaxySpiral(galaxyCanvas.width * 0.2, galaxyCanvas.height * 0.3, 150, galaxyRotation, '#64d2ff', 0.3);
-        
-        // مجرة أندروميدا
-        drawGalaxySpiral(galaxyCanvas.width * 0.8, galaxyCanvas.height * 0.2, 100, galaxyRotation * 0.7, '#bf5af2', 0.2);
-        
-        // مجرة صغيرة
-        drawGalaxySpiral(galaxyCanvas.width * 0.15, galaxyCanvas.height * 0.85, 70, galaxyRotation * 1.3, '#ff6b9d', 0.15);
-    }
+        // مركز درب التبانة
+        const centerX = canvas.width / 2;
+        const centerY = canvas.height / 2;
 
-    function drawGalaxySpiral(cx, cy, radius, rotation, color, opacity) {
-        for (let i = 0; i < 200; i++) {
-            const angle = (i / 200) * Math.PI * 4 + rotation;
-            const r = (i / 200) * radius;
-            const x = cx + Math.cos(angle) * r;
-            const y = cy + Math.sin(angle) * r;
-            const size = Math.random() * 2 + 1;
+        rotation += 0.0008;
+
+        // رسم ذراعي درب التبانة الرئيسيين بتفاصيل عالية
+        for (let arm = 0; arm < 2; arm++) {
+            const armRotation = rotation + (Math.PI * arm);
             
-            const gradient = galaxyCtx.createRadialGradient(cx, cy, 0, cx, cy, radius);
-            galaxyCtx.fillStyle = `rgba(100, 210, 255, ${opacity * (1 - i / 200)})`;
-            galaxyCtx.beginPath();
-            galaxyCtx.arc(x, y, size, 0, Math.PI * 2);
-            galaxyCtx.fill();
-        }
-    }
-
-    // رسم الأبراج النجمية
-    const constellations = [
-        { name: 'الدب الأكبر', stars: [[100, 100], [150, 120], [200, 110], [220, 150], [180, 180], [140, 170], [110, 160]], color: '#64d2ff' },
-        { name: 'الدب الأصغر', stars: [[700, 80], [720, 100], [750, 110], [780, 100], [800, 120]], color: '#bf5af2' },
-        { name: 'الجبار', stars: [[100, 400], [150, 380], [180, 420], [200, 390], [160, 450]], color: '#ffd700' },
-        { name: 'الثور', stars: [[600, 350], [650, 330], [700, 360], [670, 390]], color: '#ff6b9d' }
-    ];
-
-    function drawConstellations() {
-        consCtx.clearRect(0, 0, constellationsCanvas.width, constellationsCanvas.height);
-        
-        constellations.forEach(constellation => {
-            // رسم خطوط الأبراج
-            consCtx.strokeStyle = `${constellation.color}40`;
-            consCtx.lineWidth = 1;
-            for (let i = 0; i < constellation.stars.length - 1; i++) {
-                consCtx.beginPath();
-                consCtx.moveTo(constellation.stars[i][0], constellation.stars[i][1]);
-                consCtx.lineTo(constellation.stars[i + 1][0], constellation.stars[i + 1][1]);
-                consCtx.stroke();
-            }
-
-            // رسم النجوم
-            constellation.stars.forEach(star => {
-                consCtx.fillStyle = constellation.color;
-                consCtx.beginPath();
-                consCtx.arc(star[0], star[1], 3, 0, Math.PI * 2);
-                consCtx.fill();
+            // رسم نقاط النجوم في الذراع بكثافة عالية
+            for (let i = 0; i < 800; i++) {
+                const distance = (i / 800) * 500;
+                const angle = armRotation + (i / 800) * Math.PI * 1.5;
                 
-                // إضاءة حول النجوم
-                consCtx.fillStyle = `${constellation.color}20`;
-                consCtx.beginPath();
-                consCtx.arc(star[0], star[1], 8, 0, Math.PI * 2);
-                consCtx.fill();
-            });
-        });
-    }
+                // إضافة موجات واهتزازات للذراع
+                const waveOffset = Math.sin(angle * 3) * 30;
+                const spiralX = centerX + Math.cos(angle) * (distance + waveOffset);
+                const spiralY = centerY + Math.sin(angle) * (distance + waveOffset);
 
-    // مؤثرات التفاعل (الجزيئات)
-    window.addEventListener('mousemove', (e) => { mouse.x = e.clientX; mouse.y = e.clientY; });
-    window.addEventListener('touchmove', (e) => { if(e.touches.length > 0) { mouse.x = e.touches[0].clientX; mouse.y = e.touches[0].clientY; } });
-    window.addEventListener('pointerdown', (e) => { ripples.push({ x: e.clientX, y: e.clientY, radius: 0, alpha: 1 }); });
-    window.addEventListener('mouseleave', () => { mouse.x = null; mouse.y = null; });
-    window.addEventListener('touchend', () => { mouse.x = null; mouse.y = null; });
-
-    class Particle {
-        constructor() {
-            this.x = Math.random() * aiCanvas.width;
-            this.y = Math.random() * aiCanvas.height;
-            this.vx = (Math.random() - 0.5) * 1.2;
-            this.vy = (Math.random() - 0.5) * 1.2;
-            this.baseRadius = Math.random() * 1.8 + 0.8;
-            this.colorHue = Math.random() > 0.5 ? 210 : 270;
-        }
-
-        update() {
-            this.x += this.vx;
-            this.y += this.vy;
-            if (this.x < 0 || this.x > aiCanvas.width) this.vx *= -1;
-            if (this.y < 0 || this.y > aiCanvas.height) this.vy *= -1;
-
-            if (mouse.x != null) {
-                let dx = mouse.x - this.x, dy = mouse.y - this.y, dist = Math.sqrt(dx * dx + dy * dy);
-                if (dist < mouse.radius) {
-                    let angle = Math.atan2(dy, dx), force = (mouse.radius - dist) / mouse.radius;
-                    this.x -= Math.cos(angle) * force * 3;
-                    this.y -= Math.sin(angle) * force * 3;
+                // تدرج الكثافة - أكثر في الوسط
+                const density = Math.exp(-i / 400) * 255;
+                const brightness = 100 + Math.random() * density;
+                
+                // ألوان واقعية للمجرة
+                let starColor;
+                const rand = Math.random();
+                if (rand < 0.7) {
+                    // نجوم بيضاء زرقاء
+                    starColor = `rgba(200, 220, 255, ${(brightness / 255) * 0.6})`;
+                } else if (rand < 0.9) {
+                    // نجوم برتقالية
+                    starColor = `rgba(255, 180, 100, ${(brightness / 255) * 0.5})`;
+                } else {
+                    // نجوم حمراء
+                    starColor = `rgba(255, 100, 80, ${(brightness / 255) * 0.4})`;
                 }
+
+                ctx.fillStyle = starColor;
+                const size = Math.random() * 1.5;
+                ctx.beginPath();
+                ctx.arc(spiralX, spiralY, size, 0, Math.PI * 2);
+                ctx.fill();
             }
         }
 
-        draw() {
-            aiCtx.beginPath();
-            aiCtx.arc(this.x, this.y, this.baseRadius, 0, Math.PI * 2);
-            aiCtx.fillStyle = `hsl(${this.colorHue}, 100%, 65%)`;
-            aiCtx.shadowBlur = 8;
-            aiCtx.shadowColor = `hsl(${this.colorHue}, 100%, 65%)`;
-            aiCtx.fill();
-        }
-    }
-
-    for (let i = 0; i < 40; i++) particles.push(new Particle());
-
-    function animate() {
-        aiCtx.clearRect(0, 0, aiCanvas.width, aiCanvas.height);
-
-        for (let i = ripples.length - 1; i >= 0; i--) {
-            let r = ripples[i];
-            r.radius += 3;
-            r.alpha -= 0.025;
-            aiCtx.beginPath();
-            aiCtx.arc(r.x, r.y, r.radius, 0, Math.PI * 2);
-            aiCtx.strokeStyle = `rgba(100, 210, 255, ${r.alpha})`;
-            aiCtx.lineWidth = 1.2;
-            aiCtx.stroke();
-            if (r.alpha <= 0) ripples.splice(i, 1);
-        }
-
-        particles.forEach((p, i) => {
-            p.update();
-            p.draw();
-            for (let j = i + 1; j < particles.length; j++) {
-                let dx = p.x - particles[j].x, dy = p.y - particles[j].y, dist = Math.sqrt(dx * dx + dy * dy);
-                if (dist < 110) {
-                    aiCtx.beginPath();
-                    aiCtx.moveTo(p.x, p.y);
-                    aiCtx.lineTo(particles[j].x, particles[j].y);
-                    aiCtx.strokeStyle = `rgba(100, 210, 255, ${(1 - dist / 110) * 0.3})`;
-                    aiCtx.lineWidth = 0.6;
-                    aiCtx.stroke();
-                }
-            }
-        });
+        // رسم النواة المركزية الساطعة
+        const coreGradient = ctx.createRadialGradient(centerX, centerY, 0, centerX, centerY, 150);
+        coreGradient.addColorStop(0, 'rgba(255, 200, 150, 0.8)');
+        coreGradient.addColorStop(0.3, 'rgba(200, 150, 255, 0.6)');
+        coreGradient.addColorStop(0.7, 'rgba(100, 150, 255, 0.3)');
+        coreGradient.addColorStop(1, 'rgba(100, 100, 255, 0)');
         
-        requestAnimationFrame(animate);
-    }
+        ctx.fillStyle = coreGradient;
+        ctx.beginPath();
+        ctx.arc(centerX, centerY, 150, 0, Math.PI * 2);
+        ctx.fill();
 
-    // تحديث الخلفية
-    function animateBackground() {
-        drawStars();
-        drawGalaxy();
-        drawConstellations();
-        animate();
-        requestAnimationFrame(animateBackground);
+        // إضافة توهج حول المجرة
+        const glowGradient = ctx.createRadialGradient(centerX, centerY, 200, centerX, centerY, 600);
+        glowGradient.addColorStop(0, 'rgba(100, 150, 200, 0.1)');
+        glowGradient.addColorStop(1, 'rgba(100, 150, 200, 0)');
+        
+        ctx.fillStyle = glowGradient;
+        ctx.beginPath();
+        ctx.arc(centerX, centerY, 600, 0, Math.PI * 2);
+        ctx.fill();
+
+        // بعض النجوم الخلفية العشوائية
+        ctx.fillStyle = 'rgba(255, 255, 255, 0.5)';
+        for (let i = 0; i < 150; i++) {
+            const x = Math.random() * canvas.width;
+            const y = Math.random() * canvas.height;
+            const size = Math.random() * 1;
+            ctx.beginPath();
+            ctx.arc(x, y, size, 0, Math.PI * 2);
+            ctx.fill();
+        }
+
+        requestAnimationFrame(drawMilkyWay);
     }
-    animateBackground();
+    drawMilkyWay();
 
     // حسابات تحويل العملات
     const rates = { USD: 1, IQD: 153.6, SYP: 133, TRY: 47.21 };
