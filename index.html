@@ -3,14 +3,11 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-    
-    <title>حاسبة ومحول أسعار الصرف - Hyper AI Edition</title>
-    <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700;800&display=swap" rel="stylesheet">
-    
+    <title>حاسبة تحويل العملات</title>
+    <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;700&display=swap" rel="stylesheet">
     <style>
         :root {
             --primary: #0a84ff;
-            --primary-glow: rgba(10, 132, 255, 0.5);
             --accent-cyan: #64d2ff;
             --accent-purple: #bf5af2;
             --bg-color: #020204;
@@ -20,25 +17,24 @@
             --border-color: rgba(255, 255, 255, 0.12);
             --input-bg: #1c1c1e;
             --accent-green: #30d158;
-            --shadow: 0 16px 40px rgba(0, 0, 0, 0.8);
+            --shadow: 0 8px 20px rgba(0, 0, 0, 0.6);
         }
 
         * {
             box-sizing: border-box;
             margin: 0;
             padding: 0;
-            font-family: 'Tajawal', -apple-system, BlinkMacSystemFont, sans-serif;
+            font-family: 'Tajawal', sans-serif;
             -webkit-tap-highlight-color: transparent;
         }
 
         body {
             background-color: var(--bg-color);
             color: var(--text-main);
-            padding: calc(env(safe-area-inset-top) + 1rem) 1rem calc(env(safe-area-inset-bottom) + 2rem) 1rem;
+            padding: max(env(safe-area-inset-top), 8px) 8px max(env(safe-area-inset-bottom), 8px) 8px;
             min-height: 100vh;
             display: flex;
-            flex-direction: column;
-            align-items: center;
+            justify-content: center;
             overflow-x: hidden;
             position: relative;
         }
@@ -55,52 +51,45 @@
 
         .container {
             width: 100%;
-            max-width: 480px;
+            max-width: 420px;
             position: relative;
             z-index: 1;
         }
 
         header {
             text-align: center;
-            margin-bottom: 1.5rem;
+            margin-bottom: 0.8rem;
+            padding: 0.4rem 0;
         }
 
         header h1 {
-            font-size: 1.8rem;
-            font-weight: 800;
+            font-size: 1.3rem;
+            font-weight: 700;
             background: linear-gradient(135deg, #ffffff 0%, var(--accent-cyan) 50%, var(--accent-purple) 100%);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
-            text-shadow: 0 0 25px rgba(10, 132, 255, 0.4);
-            animation: pulseText 4s infinite alternate ease-in-out;
-        }
-
-        @keyframes pulseText {
-            0% { filter: drop-shadow(0 0 10px rgba(10, 132, 255, 0.3)); }
-            100% { filter: drop-shadow(0 0 25px rgba(191, 90, 242, 0.6)); }
         }
 
         header p {
             color: var(--text-muted);
-            font-size: 0.85rem;
-            margin-top: 0.3rem;
+            font-size: 0.7rem;
+            margin-top: 0.1rem;
         }
 
         .grid {
             display: flex;
             flex-direction: column;
-            gap: 1.2rem;
+            gap: 0.6rem;
         }
 
         .card {
             background: var(--card-bg);
             backdrop-filter: blur(30px);
-            -webkit-backdrop-filter: blur(30px);
-            border-radius: 1.5rem;
-            padding: 1.25rem;
+            border-radius: 1rem;
+            padding: 0.8rem;
             box-shadow: var(--shadow);
             border: 1px solid var(--border-color);
-            transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+            transition: all 0.3s ease;
             position: relative;
             overflow: hidden;
         }
@@ -111,9 +100,9 @@
             top: 0;
             left: 0;
             right: 0;
-            height: 2px;
+            height: 1.5px;
             background: linear-gradient(90deg, transparent, var(--accent-cyan), transparent);
-            animation: scanline 3s infinite linear;
+            animation: scanline 3s infinite;
         }
 
         @keyframes scanline {
@@ -122,27 +111,23 @@
         }
 
         .card-title {
-            font-size: 1.05rem;
+            font-size: 0.9rem;
             font-weight: 700;
-            margin-bottom: 1.1rem;
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
+            margin-bottom: 0.6rem;
             color: #fff;
             border-bottom: 1px solid var(--border-color);
-            padding-bottom: 0.75rem;
+            padding-bottom: 0.4rem;
         }
 
-        .form-group {
-            margin-bottom: 1rem;
-        }
-
-        /* تنسيق لجعل المبلغ والمراد تحويله ومن عملة في مستوى واحد */
         .input-row {
             display: grid;
             grid-template-columns: 1fr 1.2fr;
-            gap: 0.75rem;
+            gap: 0.5rem;
             margin-bottom: 0.5rem;
+        }
+
+        .form-group {
+            margin-bottom: 0.6rem;
         }
 
         .input-row .form-group {
@@ -151,104 +136,115 @@
 
         label {
             display: block;
-            font-size: 0.82rem;
+            font-size: 0.7rem;
             font-weight: 600;
             color: var(--text-muted);
-            margin-bottom: 0.4rem;
+            margin-bottom: 0.2rem;
         }
 
         input, select {
             width: 100%;
-            padding: 0.85rem 0.5rem;
+            padding: 0.6rem 0.35rem;
             border: 1px solid var(--border-color);
-            border-radius: 0.85rem;
-            font-size: 16px !important;
+            border-radius: 0.65rem;
+            font-size: 14px !important;
             font-weight: 700;
             color: var(--text-main);
             outline: none;
-            transition: all 0.3s ease;
             background-color: var(--input-bg);
             -webkit-appearance: none;
-            -moz-appearance: none;
             appearance: none;
-        }
-
-        select option {
-            background-color: #1c1c1e !important;
-            color: #ffffff !important;
-            padding: 12px;
-            font-size: 15px;
         }
 
         input:focus, select:focus {
             border-color: var(--accent-cyan);
-            box-shadow: 0 0 15px var(--primary-glow);
+            box-shadow: 0 0 10px rgba(10, 132, 255, 0.3);
             background-color: #2c2c2e;
         }
 
         select {
-            background-image: url("data:image/svg+xml;utf8,<svg fill='%2364d2ff' height='24' viewBox='0 0 24 24' width='24' xmlns='http://www.w3.org/2000/svg'><path d='M7 10l5 5 5-5z'/></svg>");
+            background-image: url("data:image/svg+xml;utf8,<svg fill='%2364d2ff' height='16' viewBox='0 0 24 24' xmlns='http://www.w3.org/2000/svg'><path d='M7 10l5 5 5-5z'/></svg>");
             background-repeat: no-repeat;
-            background-position: left 0.8rem center;
-            padding-left: 2.2rem;
+            background-position: left 0.5rem center;
+            background-size: 14px;
+            padding-left: 1.6rem;
             cursor: pointer;
         }
 
         .results-grid {
             display: grid;
             grid-template-columns: repeat(3, 1fr);
-            gap: 0.5rem;
-            margin-top: 1rem;
+            gap: 0.3rem;
+            margin-top: 0.6rem;
         }
 
         .currency-item {
-            background: rgba(255, 255, 255, 0.03);
+            background: rgba(255, 255, 255, 0.02);
             border: 1px solid var(--border-color);
-            padding: 0.85rem 0.3rem;
-            border-radius: 1rem;
+            padding: 0.5rem 0.15rem;
+            border-radius: 0.7rem;
             text-align: center;
-            transition: all 0.3s ease;
             display: flex;
             flex-direction: column;
             justify-content: center;
+            transition: all 0.2s ease;
         }
 
         .currency-item:active {
-            transform: scale(0.96);
+            transform: scale(0.94);
             border-color: var(--accent-cyan);
-            box-shadow: 0 0 12px rgba(100, 210, 255, 0.3);
+            box-shadow: 0 0 10px rgba(100, 210, 255, 0.25);
         }
 
         .currency-item .name {
-            font-size: 0.72rem;
+            font-size: 0.6rem;
             color: var(--text-muted);
             font-weight: 600;
-            white-space: nowrap;
         }
 
         .currency-item .val {
-            font-size: 0.95rem;
-            font-weight: 800;
+            font-size: 0.8rem;
+            font-weight: 700;
             color: var(--accent-cyan);
-            margin-top: 0.25rem;
+            margin-top: 0.1rem;
             direction: ltr;
+        }
+
+        .editable-rates {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 0.35rem;
+        }
+
+        .editable-rates .form-group {
+            margin-bottom: 0;
+        }
+
+        .editable-rates label {
+            font-size: 0.65rem;
+            margin-bottom: 0.2rem;
+        }
+
+        .editable-rates input {
+            padding: 0.5rem 0.2rem;
+            font-size: 12px !important;
         }
 
         table {
             width: 100%;
             border-collapse: collapse;
-            font-size: 0.85rem;
+            font-size: 0.75rem;
         }
 
         th, td {
-            padding: 0.75rem 0.3rem;
+            padding: 0.4rem 0.2rem;
             text-align: center;
             border-bottom: 1px solid var(--border-color);
             color: #fff;
         }
 
         th {
-            background-color: rgba(255, 255, 255, 0.03);
+            background-color: rgba(255, 255, 255, 0.02);
             color: var(--text-muted);
             font-weight: 700;
         }
@@ -256,124 +252,70 @@
         .fix-badge {
             background-color: rgba(48, 209, 88, 0.15);
             color: var(--accent-green);
-            padding: 0.2rem 0.5rem;
-            border-radius: 0.4rem;
-            font-size: 0.75rem;
+            padding: 0.1rem 0.3rem;
+            border-radius: 0.25rem;
+            font-size: 0.6rem;
             font-weight: 700;
-        }
-
-        /* تعديل الشبكة لتجعل العملات الثلاثة في صف واحد */
-        .editable-rates {
-            display: grid;
-            grid-template-columns: repeat(3, 1fr);
-            gap: 0.5rem;
-        }
-
-        .editable-rates .form-group {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            text-align: center;
-            margin-bottom: 0;
-        }
-
-        .editable-rates label {
-            margin-bottom: 0.4rem;
-            text-align: center;
-            width: 100%;
-            font-size: 0.78rem;
-            white-space: nowrap;
-        }
-
-        .editable-rates input {
-            text-align: center;
-            padding: 0.75rem 0.3rem;
         }
     </style>
 </head>
 <body>
-
 <canvas id="ai-bg"></canvas>
-
 <div class="container">
     <header>
-        <h1>برنامج تحويل سعر صرف العملات</h1>
-        <p> مصمم بنظام تفاعلي ذكي فائق السرعة والحيوية من قبل مصطفى عسل*_^</p>
+        <h1>تحويل العملات</h1>
+        <p>برنامج ذكي سريع بتصميم عصري</p>
     </header>
-
     <div class="grid">
-        <!-- الحاسبة -->
         <div class="card">
-            <div class="card-title">
-                <span>📊 حاسبة التحويل السريع</span>
-            </div>
-
-            <!-- صف جديد يضم المدخلات بجانب بعضهما -->
+            <div class="card-title">📊 التحويل السريع</div>
             <div class="input-row">
                 <div class="form-group">
-                    <label>المبلغ المراد تحويله:</label>
+                    <label>المبلغ:</label>
                     <input type="number" id="amount" value="1" min="0" step="any" inputmode="decimal" oninput="calculate()">
                 </div>
-
                 <div class="form-group">
-                    <label>من عملة:</label>
+                    <label>من:</label>
                     <select id="fromCurrency" onchange="calculate()">
-                        <option value="USD" selected>دولار أمريكي ($)</option>
-                        <option value="IQD">دينار عراقي (IQD)</option>
-                        <option value="SYP">ليرة سورية (SYP)</option>
-                        <option value="TRY">ليرة تركية (TRY)</option>
+                        <option value="USD">دولار</option>
+                        <option value="IQD">عراقي</option>
+                        <option value="SYP">سوري</option>
+                        <option value="TRY">تركي</option>
                     </select>
                 </div>
             </div>
-
             <div class="results-grid" id="conversionResults"></div>
         </div>
 
-        <!-- أسعار الصرف -->
         <div class="card">
-            <div class="card-title">
-                <span>⚙️ أسعار الصرف (مقابل 1 دولار)</span>
-            </div>
-
+            <div class="card-title">⚙️ أسعار الصرف</div>
             <div class="editable-rates">
                 <div class="form-group">
-                    <label>الدينار العراقي</label>
-                    <input type="number" id="rate_IQD" value="153.600" inputmode="decimal" oninput="updateRates()">
+                    <label>العراقي</label>
+                    <input type="number" id="rate_IQD" value="153.6" step="0.1" oninput="updateRates()">
                 </div>
-
                 <div class="form-group">
-                    <label>الليرة السورية</label>
-                    <input type="number" id="rate_SYP" value="133" inputmode="decimal" oninput="updateRates()">
+                    <label>السوري</label>
+                    <input type="number" id="rate_SYP" value="133" step="0.1" oninput="updateRates()">
                 </div>
-
                 <div class="form-group">
-                    <label>الليرة التركية</label>
-                    <input type="number" id="rate_TRY" value="47.21" inputmode="decimal" oninput="updateRates()">
-                </div>
-
-                <!-- إخفاء عنصر الدولار بالكامل من العرض -->
-                <div class="form-group" style="display: none;">
-                    <label>الدولار الأمريكي</label>
-                    <input type="number" id="rate_USD" value="1" disabled>
+                    <label>التركي</label>
+                    <input type="number" id="rate_TRY" value="47.21" step="0.1" oninput="updateRates()">
                 </div>
             </div>
         </div>
 
-        <!-- جدول المقارنة -->
         <div class="card">
-            <div class="card-title">
-                <span>📋 جدول المقارنة المباشر</span>
-            </div>
-
+            <div class="card-title">📋 جدول المقارنة</div>
             <div style="overflow-x: auto;">
                 <table>
                     <thead>
                         <tr>
-                            <th>الأساسية</th>
-                            <th>دولار</th>
-                            <th>عراقي</th>
-                            <th>سوري</th>
-                            <th>تركي</th>
+                            <th>الأساس</th>
+                            <th>$</th>
+                            <th>د.ع</th>
+                            <th>ل.س</th>
+                            <th>₺</th>
                         </tr>
                     </thead>
                     <tbody id="matrixTable"></tbody>
@@ -384,16 +326,10 @@
 </div>
 
 <script>
-    /* --- 1. محرك خلفية الذكاء الاصطناعي التفاعلي --- */
     const canvas = document.getElementById('ai-bg');
     const ctx = canvas.getContext('2d');
-
-    let particles = [];
-    let ripples = [];
-    const particleCount = 70;
-    const maxDistance = 125;
-
-    let mouse = { x: null, y: null, radius: 170 };
+    let particles = [], ripples = [];
+    let mouse = { x: null, y: null, radius: 140 };
 
     function resizeCanvas() {
         canvas.width = window.innerWidth;
@@ -402,28 +338,9 @@
     window.addEventListener('resize', resizeCanvas);
     resizeCanvas();
 
-    window.addEventListener('mousemove', (e) => {
-        mouse.x = e.clientX;
-        mouse.y = e.clientY;
-    });
-
-    window.addEventListener('touchmove', (e) => {
-        if(e.touches.length > 0) {
-            mouse.x = e.touches[0].clientX;
-            mouse.y = e.touches[0].clientY;
-        }
-    });
-
-    window.addEventListener('pointerdown', (e) => {
-        ripples.push({
-            x: e.clientX,
-            y: e.clientY,
-            radius: 0,
-            maxRadius: 200,
-            alpha: 1
-        });
-    });
-
+    window.addEventListener('mousemove', (e) => { mouse.x = e.clientX; mouse.y = e.clientY; });
+    window.addEventListener('touchmove', (e) => { if(e.touches.length > 0) { mouse.x = e.touches[0].clientX; mouse.y = e.touches[0].clientY; } });
+    window.addEventListener('pointerdown', (e) => { ripples.push({ x: e.clientX, y: e.clientY, radius: 0, alpha: 1 }); });
     window.addEventListener('mouseleave', () => { mouse.x = null; mouse.y = null; });
     window.addEventListener('touchend', () => { mouse.x = null; mouse.y = null; });
 
@@ -431,109 +348,85 @@
         constructor() {
             this.x = Math.random() * canvas.width;
             this.y = Math.random() * canvas.height;
-            this.vx = (Math.random() - 0.5) * 1.8;
-            this.vy = (Math.random() - 0.5) * 1.8;
-            this.baseRadius = Math.random() * 2.5 + 1;
-            this.radius = this.baseRadius;
+            this.vx = (Math.random() - 0.5) * 1.2;
+            this.vy = (Math.random() - 0.5) * 1.2;
+            this.baseRadius = Math.random() * 1.8 + 0.8;
             this.colorHue = Math.random() > 0.5 ? 210 : 270;
-            this.pulseSpeed = Math.random() * 0.05 + 0.02;
         }
 
         update() {
             this.x += this.vx;
             this.y += this.vy;
-
             if (this.x < 0 || this.x > canvas.width) this.vx *= -1;
             if (this.y < 0 || this.y > canvas.height) this.vy *= -1;
 
-            this.radius = this.baseRadius + Math.sin(Date.now() * this.pulseSpeed) * 1;
-
-            if (mouse.x != null && mouse.y != null) {
-                let dx = mouse.x - this.x;
-                let dy = mouse.y - this.y;
-                let distance = Math.sqrt(dx * dx + dy * dy);
-
-                if (distance < mouse.radius) {
-                    let angle = Math.atan2(dy, dx);
-                    let force = (mouse.radius - distance) / mouse.radius;
-                    this.x -= Math.cos(angle) * force * 4;
-                    this.y -= Math.sin(angle) * force * 4;
+            if (mouse.x != null) {
+                let dx = mouse.x - this.x, dy = mouse.y - this.y, dist = Math.sqrt(dx * dx + dy * dy);
+                if (dist < mouse.radius) {
+                    let angle = Math.atan2(dy, dx), force = (mouse.radius - dist) / mouse.radius;
+                    this.x -= Math.cos(angle) * force * 3;
+                    this.y -= Math.sin(angle) * force * 3;
                 }
             }
         }
 
         draw() {
             ctx.beginPath();
-            ctx.arc(this.x, this.y, this.radius, 0, Math.PI * 2);
+            ctx.arc(this.x, this.y, this.baseRadius, 0, Math.PI * 2);
             ctx.fillStyle = `hsl(${this.colorHue}, 100%, 65%)`;
-            ctx.shadowBlur = 12;
+            ctx.shadowBlur = 8;
             ctx.shadowColor = `hsl(${this.colorHue}, 100%, 65%)`;
             ctx.fill();
         }
     }
 
-    for (let i = 0; i < particleCount; i++) {
-        particles.push(new Particle());
-    }
+    for (let i = 0; i < 40; i++) particles.push(new Particle());
 
     function animate() {
         ctx.clearRect(0, 0, canvas.width, canvas.height);
 
         for (let i = ripples.length - 1; i >= 0; i--) {
             let r = ripples[i];
-            r.radius += 4;
-            r.alpha -= 0.02;
-
+            r.radius += 3;
+            r.alpha -= 0.025;
             ctx.beginPath();
             ctx.arc(r.x, r.y, r.radius, 0, Math.PI * 2);
             ctx.strokeStyle = `rgba(100, 210, 255, ${r.alpha})`;
-            ctx.lineWidth = 2;
+            ctx.lineWidth = 1.2;
             ctx.stroke();
-
-            if (r.alpha <= 0) {
-                ripples.splice(i, 1);
-            }
+            if (r.alpha <= 0) ripples.splice(i, 1);
         }
 
-        for (let i = 0; i < particles.length; i++) {
-            particles[i].update();
-            particles[i].draw();
-
+        particles.forEach((p, i) => {
+            p.update();
+            p.draw();
             for (let j = i + 1; j < particles.length; j++) {
-                let dx = particles[i].x - particles[j].x;
-                let dy = particles[i].y - particles[j].y;
-                let dist = Math.sqrt(dx * dx + dy * dy);
-
-                if (dist < maxDistance) {
+                let dx = p.x - particles[j].x, dy = p.y - particles[j].y, dist = Math.sqrt(dx * dx + dy * dy);
+                if (dist < 110) {
                     ctx.beginPath();
-                    ctx.moveTo(particles[i].x, particles[i].y);
+                    ctx.moveTo(p.x, p.y);
                     ctx.lineTo(particles[j].x, particles[j].y);
-                    ctx.strokeStyle = `rgba(100, 210, 255, ${(1 - dist / maxDistance) * 0.4})`;
-                    ctx.lineWidth = 0.8;
+                    ctx.strokeStyle = `rgba(100, 210, 255, ${(1 - dist / 110) * 0.3})`;
+                    ctx.lineWidth = 0.6;
                     ctx.stroke();
                 }
             }
-        }
+        });
         requestAnimationFrame(animate);
     }
     animate();
 
-    /* --- 2. منطق الحسابات والتحويلات --- */
-    const defaultRates = { USD: 1, IQD: 153.600, SYP: 133, TRY: 47.21 };
-    let rates = { ...defaultRates };
-
-    const currencyNames = { USD: "دولار", IQD: "دينار عراقي", SYP: "ليرة سورية", TRY: "ليرة تركية" };
-    const currencySymbols = { USD: "$", IQD: "د.ع", SYP: "ل.س", TRY: "₺" };
+    const rates = { USD: 1, IQD: 153.6, SYP: 133, TRY: 47.21 };
+    const names = { USD: "دولار", IQD: "عراقي", SYP: "سوري", TRY: "تركي" };
+    const symbols = { USD: "$", IQD: "د.ع", SYP: "ل.س", TRY: "₺" };
 
     function loadSavedRates() {
-        const saved = localStorage.getItem('user_exchange_rates');
+        const saved = localStorage.getItem('rates');
         if (saved) {
-            rates = JSON.parse(saved);
+            Object.assign(rates, JSON.parse(saved));
             document.getElementById('rate_IQD').value = rates.IQD;
             document.getElementById('rate_SYP').value = rates.SYP;
             document.getElementById('rate_TRY').value = rates.TRY;
-        } else {
-            localStorage.setItem('user_exchange_rates', JSON.stringify(rates));
         }
     }
 
@@ -541,8 +434,7 @@
         rates.IQD = parseFloat(document.getElementById('rate_IQD').value) || 0;
         rates.SYP = parseFloat(document.getElementById('rate_SYP').value) || 0;
         rates.TRY = parseFloat(document.getElementById('rate_TRY').value) || 0;
-        
-        localStorage.setItem('user_exchange_rates', JSON.stringify(rates));
+        localStorage.setItem('rates', JSON.stringify(rates));
         calculate();
         renderMatrix();
     }
@@ -550,65 +442,32 @@
     function calculate() {
         const amount = parseFloat(document.getElementById('amount').value) || 0;
         const from = document.getElementById('fromCurrency').value;
-        const resultsContainer = document.getElementById('conversionResults');
-
         const amountInUSD = amount / rates[from];
-        resultsContainer.innerHTML = '';
+        document.getElementById('conversionResults').innerHTML = '';
 
         for (let curr in rates) {
             if (curr !== from) {
-                const converted = amountInUSD * rates[curr];
-                let formattedVal = converted.toLocaleString('en-US', {
-                    maximumFractionDigits: curr === 'USD' ? 4 : 2,
-                    minimumFractionDigits: 0
-                });
-
-                if (curr === 'USD' && converted < 0.1) {
-                    formattedVal = converted.toFixed(3);
-                }
-
-                resultsContainer.innerHTML += `
-                    <div class="currency-item">
-                        <div class="name">${currencyNames[curr]}</div>
-                        <div class="val">${formattedVal} ${currencySymbols[curr]}</div>
-                    </div>
-                `;
+                const val = (amountInUSD * rates[curr]).toLocaleString('en-US', { maximumFractionDigits: curr === 'USD' ? 3 : 1 });
+                document.getElementById('conversionResults').innerHTML += `<div class="currency-item"><div class="name">${names[curr]}</div><div class="val">${val} ${symbols[curr]}</div></div>`;
             }
         }
     }
 
     function renderMatrix() {
-        const matrixBody = document.getElementById('matrixTable');
-        matrixBody.innerHTML = '';
-
-        const bases = ['USD', 'TRY'];
-
-        bases.forEach(base => {
-            let rowHtml = `<tr><td><strong>1 ${currencyNames[base]}</strong></td>`;
-            const baseInUSD = 1 / rates[base];
-
-            ['USD', 'IQD', 'SYP', 'TRY'].forEach(target => {
-                const val = baseInUSD * rates[target];
-                let displayVal = val.toLocaleString('en-US', { maximumFractionDigits: 2 });
-                
-                if (target === 'USD' && base === 'TRY') {
-                    displayVal = `<span class="fix-badge">${val.toFixed(3)} $</span>`;
-                }
-
-                rowHtml += `<td>${displayVal}</td>`;
+        const tbody = document.getElementById('matrixTable');
+        tbody.innerHTML = '';
+        ['USD', 'TRY'].forEach(base => {
+            let html = `<tr><td><strong>1 ${names[base]}</strong></td>`;
+            const baseUSD = 1 / rates[base];
+            ['USD', 'IQD', 'SYP', 'TRY'].forEach(t => {
+                const v = (baseUSD * rates[t]).toLocaleString('en-US', { maximumFractionDigits: 2 });
+                html += `<td>${v}</td>`;
             });
-
-            rowHtml += `</tr>`;
-            matrixBody.innerHTML += rowHtml;
+            tbody.innerHTML += html + '</tr>';
         });
     }
 
-    window.onload = function() {
-        loadSavedRates();
-        calculate();
-        renderMatrix();
-    };
+    window.onload = () => { loadSavedRates(); calculate(); renderMatrix(); };
 </script>
-
 </body>
 </html>
