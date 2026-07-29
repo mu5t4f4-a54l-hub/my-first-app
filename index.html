@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>منصة سعر الصرف</title>
+    <title>منصة سعر صرف العملات الشهير</title>
     <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700;900&display=swap" rel="stylesheet">
     <style>
         :root {
@@ -181,12 +181,13 @@
 
     <div class="container">
         <header>
-            <h1>منصة سعر الصرف</h1>
-            <p class="subtitle">مصمم بنظام تفاعلي فائق السرعة</p>
+            <h1>منصة سعر صرف العملات الشهير</h1>
+            <p class="subtitle">أمام درب التبانة السحرية - صممت بواسطة "مصطفى عسل"</p>
         </header>
 
+        <!-- حاسبة التحويل السريع -->
         <div class="card">
-            <div class="card-title">📊 منصة سعر الصرف</div>
+            <div class="card-title">📊 تحديث وتعديل سعر صرف العملة</div>
             
             <div class="input-group">
                 <div class="field">
@@ -219,6 +220,7 @@
             </div>
         </div>
 
+        <!-- أسعار الصرف الثابتة -->
         <div class="card">
             <div class="card-title">⚙️ أسعار الصرف (مقابل 1 دولار)</div>
             <div class="results-grid">
@@ -237,6 +239,7 @@
             </div>
         </div>
 
+        <!-- جدول المقارنة المباشر -->
         <div class="card">
             <div class="card-title">📋 جدول المقارنة المباشر</div>
             <table class="rates-table">
@@ -263,7 +266,6 @@
     </div>
 
     <script>
-        // أسعار الصرف المرجعية مقابل الدولار الأمريكي
         const rates = {
             USD: 1,
             IQD: 1499,
@@ -275,15 +277,12 @@
             let amount = parseFloat(document.getElementById('amount').value) || 0;
             let base = document.getElementById('baseCurrency').value;
 
-            // تحويل المبلغ المدخل إلى دولار أولاً
             let amountInUSD = amount / rates[base];
 
-            // حساب القيم للعملات الأخرى
             let iqd = amountInUSD * rates.IQD;
             let syp = amountInUSD * rates.SYP;
             let tryVal = amountInUSD * rates.TRY;
 
-            // عرض النواتج منسقة
             document.getElementById('resIQD').innerText = iqd.toLocaleString('en-US', {maximumFractionDigits: 0});
             document.getElementById('resSYP').innerText = syp.toLocaleString('en-US', {maximumFractionDigits: 0});
             document.getElementById('resTRY').innerText = tryVal.toLocaleString('en-US', {maximumFractionDigits: 2});
