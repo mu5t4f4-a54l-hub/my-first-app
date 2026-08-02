@@ -3,290 +3,640 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>منصة سعر الصرف</title>
-    <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700;900&display=swap" rel="stylesheet">
+    <title>تطبيق التواصل - iPhone 15 Pro Max</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
         :root {
-            --primary: #0a84ff;
-            --accent-cyan: #64d2ff;
-            --accent-purple: #bf5af2;
-            --bg-color: #020204;
-            --card-bg: rgba(15, 15, 25, 0.75);
-            --text-main: #ffffff;
-            --text-muted: #8e8e93;
-            --border-color: rgba(255, 255, 255, 0.08);
-            --input-bg: #1c1c1e;
-            --accent-green: #30d158;
-            --shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+            --bg-color: #0b141a;
+            --header-bg: #1f2c34;
+            --chat-bg: #0d1418;
+            --outgoing-bubble: #005c4b;
+            --incoming-bubble: #202c33;
+            --accent-color: #00a884;
+            --text-primary: #e9edef;
+            --text-secondary: #8696a0;
+            --danger-color: #ea4335;
         }
 
         * {
             box-sizing: border-box;
             margin: 0;
             padding: 0;
-            font-family: 'Tajawal', sans-serif;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
             -webkit-tap-highlight-color: transparent;
         }
 
         body {
-            width: 100%;
-            min-height: 100vh;
-            margin: 0;
-            background-color: var(--bg-color);
-            color: var(--text-main);
+            background-color: #111b21;
             display: flex;
             justify-content: center;
             align-items: center;
-            padding: 10px;
-            background-image: 
-                radial-gradient(circle at 10% 20%, rgba(10, 132, 255, 0.1) 0%, transparent 40%),
-                radial-gradient(circle at 90% 80%, rgba(191, 90, 242, 0.1) 0%, transparent 40%);
-            background-attachment: fixed;
+            min-height: 100vh;
+            padding: 20px 0;
         }
 
-        .container {
-            width: 100%;
-            max-width: 420px;
+        /* إطار هاتف iPhone 15 Pro Max */
+        .phone-frame {
+            width: 430px;
+            height: 932px;
+            background-color: var(--bg-color);
+            border-radius: 50px;
+            box-shadow: 0 0 0 12px #2d2d2d, 0 20px 50px rgba(0, 0, 0, 0.8);
+            position: relative;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            border: 4px solid #404040;
+        }
+
+        /* الجزيرة التفاعلية (Dynamic Island) */
+        .dynamic-island {
+            position: absolute;
+            top: 10px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 120px;
+            height: 35px;
+            background-color: #000;
+            border-radius: 20px;
+            z-index: 999;
+            transition: all 0.3s ease;
+        }
+
+        /* رأس التطبيق */
+        .app-header {
+            background-color: var(--header-bg);
+            padding: 45px 16px 12px 16px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            color: var(--text-primary);
+            box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+            z-index: 10;
+        }
+
+        .user-info {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .avatar {
+            width: 42px;
+            height: 42px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #00a884, #005c4b);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            color: #fff;
+        }
+
+        .header-actions {
+            display: flex;
+            gap: 18px;
+            font-size: 1.2rem;
+            color: var(--text-primary);
+        }
+
+        .header-actions i {
+            cursor: pointer;
+            transition: color 0.2s;
+        }
+
+        .header-actions i:hover {
+            color: var(--accent-color);
+        }
+
+        /* منطقة المحادثة */
+        .chat-container {
+            flex: 1;
+            background-color: var(--chat-bg);
+            background-image: radial-gradient(#202c33 1px, transparent 1px);
+            background-size: 20px 20px;
+            padding: 16px;
+            overflow-y: auto;
             display: flex;
             flex-direction: column;
             gap: 12px;
         }
 
-        header {
-            text-align: center;
-            margin-bottom: 2px;
+        /* فقاعات الرسائل */
+        .message {
+            max-width: 80%;
+            padding: 8px 12px;
+            border-radius: 12px;
+            font-size: 0.95rem;
+            color: var(--text-primary);
+            position: relative;
+            word-wrap: break-word;
+            line-height: 1.4;
         }
 
-        h1 {
-            font-size: 1.3rem;
-            font-weight: 900;
-            background: linear-gradient(135deg, #64d2ff, #0a84ff, #bf5af2);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            margin-bottom: 2px;
+        .message.outgoing {
+            align-self: flex-end;
+            background-color: var(--outgoing-bubble);
+            border-top-left-radius: 12px;
+            border-top-right-radius: 0px;
         }
 
-        p.subtitle {
-            font-size: 0.72rem;
-            color: var(--text-muted);
+        .message.incoming {
+            align-self: flex-start;
+            background-color: var(--incoming-bubble);
+            border-top-left-radius: 0px;
+            border-top-right-radius: 12px;
         }
 
-        .card {
-            background: var(--card-bg);
-            backdrop-filter: blur(15px);
-            -webkit-backdrop-filter: blur(15px);
-            border: 1px solid var(--border-color);
-            border-radius: 16px;
-            padding: 12px;
-            box-shadow: var(--shadow);
+        .message .time {
+            font-size: 0.68rem;
+            color: rgba(255, 255, 255, 0.6);
+            margin-top: 4px;
+            text-align: left;
+            display: block;
         }
 
-        .card-title {
-            font-size: 0.85rem;
-            font-weight: 700;
-            margin-bottom: 10px;
+        /* عناصر الوسائط التشغيلية */
+        .media-preview-img, .media-preview-video {
+            max-width: 100%;
+            border-radius: 8px;
+            margin-top: 4px;
+            display: block;
+        }
+
+        audio {
+            width: 100%;
+            height: 36px;
+            margin-top: 5px;
+            border-radius: 20px;
+        }
+
+        .file-attachment {
             display: flex;
             align-items: center;
-            gap: 6px;
-            color: var(--accent-cyan);
-            border-bottom: 1px solid var(--border-color);
-            padding-bottom: 6px;
+            gap: 10px;
+            background: rgba(0,0,0,0.2);
+            padding: 8px 12px;
+            border-radius: 8px;
+            text-decoration: none;
+            color: var(--text-primary);
         }
 
-        .input-group {
-            display: grid;
-            grid-template-columns: 1fr 1.2fr;
-            gap: 8px;
-            margin-bottom: 10px;
-        }
-
-        .field {
+        /* شريط إدخال الرسائل */
+        .input-bar {
+            background-color: var(--header-bg);
+            padding: 10px 12px 25px 12px;
             display: flex;
-            flex-direction: column;
-            gap: 4px;
+            align-items: center;
+            gap: 8px;
         }
 
-        label {
-            font-size: 0.7rem;
-            color: var(--text-muted);
+        .input-container {
+            flex: 1;
+            background-color: #2a3942;
+            border-radius: 24px;
+            display: flex;
+            align-items: center;
+            padding: 6px 12px;
+            gap: 8px;
         }
 
-        select, input {
-            width: 100%;
-            background: var(--input-bg);
-            border: 1px solid var(--border-color);
-            color: var(--text-main);
-            padding: 8px;
-            border-radius: 10px;
-            font-size: 0.85rem;
-            font-family: 'Tajawal', sans-serif;
+        .input-container input {
+            flex: 1;
+            background: none;
+            border: none;
             outline: none;
-            transition: 0.2s;
+            color: var(--text-primary);
+            font-size: 0.95rem;
         }
 
-        select:focus, input:focus {
-            border-color: var(--primary);
+        .icon-btn {
+            background: none;
+            border: none;
+            color: var(--text-secondary);
+            font-size: 1.2rem;
+            cursor: pointer;
         }
 
-        .results-grid {
-            display: grid;
-            grid-template-columns: repeat(3, 1fr);
-            gap: 6px;
+        .send-btn {
+            width: 42px;
+            height: 42px;
+            border-radius: 50%;
+            background-color: var(--accent-color);
+            color: #fff;
+            border: none;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
         }
 
-        .res-box {
-            background: rgba(255, 255, 255, 0.03);
-            border: 1px solid var(--border-color);
-            border-radius: 10px;
-            padding: 8px 4px;
+        /* شاشة المكالمات (الصوتية والفيديو) */
+        .call-screen {
+            position: absolute;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background-color: #111b21;
+            z-index: 100;
+            display: none;
+            flex-direction: column;
+            justify-content: space-between;
+            padding: 80px 20px 50px 20px;
             text-align: center;
         }
 
-        .res-box .currency-name {
-            font-size: 0.65rem;
-            color: var(--text-muted);
-            margin-bottom: 2px;
+        .call-screen.active {
+            display: flex;
         }
 
-        .res-box .currency-val {
-            font-size: 0.85rem;
-            font-weight: 700;
-            color: var(--accent-cyan);
+        .video-container {
+            position: absolute;
+            top: 0; left: 0; width: 100%; height: 100%;
+            object-fit: cover;
+            z-index: -1;
+            background-color: #000;
         }
 
-        .rates-table {
+        .call-user-avatar {
+            width: 100px;
+            height: 100px;
+            border-radius: 50%;
+            background: var(--accent-color);
+            margin: 0 auto 15px auto;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2.5rem;
+            color: white;
+        }
+
+        .call-controls {
+            display: flex;
+            justify-content: center;
+            gap: 25px;
+            background: rgba(31, 44, 52, 0.85);
+            padding: 15px 30px;
+            border-radius: 30px;
+            backdrop-filter: blur(10px);
+        }
+
+        .call-btn {
+            width: 55px;
+            height: 55px;
+            border-radius: 50%;
+            border: none;
+            background-color: #2a3942;
+            color: white;
+            font-size: 1.3rem;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .call-btn.muted {
+            background-color: var(--danger-color);
+        }
+
+        .call-btn.end-call {
+            background-color: var(--danger-color);
+        }
+
+        /* نافذة رابط الدعوة */
+        .modal-overlay {
+            position: absolute;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.7);
+            z-index: 200;
+            display: none;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+
+        .modal {
+            background: var(--header-bg);
+            border-radius: 16px;
+            padding: 20px;
             width: 100%;
-            border-collapse: collapse;
-            font-size: 0.75rem;
+            color: var(--text-primary);
             text-align: center;
         }
 
-        .rates-table th, .rates-table td {
-            padding: 6px 4px;
-            border-bottom: 1px solid var(--border-color);
+        .link-box {
+            background: #111b21;
+            padding: 10px;
+            border-radius: 8px;
+            margin: 15px 0;
+            font-size: 0.85rem;
+            word-break: break-all;
+            border: 1px dashed var(--accent-color);
+            color: var(--accent-color);
         }
 
-        .rates-table th {
-            color: var(--text-muted);
-            font-weight: 500;
-            font-size: 0.7rem;
+        .modal-btn {
+            background: var(--accent-color);
+            color: white;
+            border: none;
+            padding: 10px 16px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: bold;
+            margin: 5px;
         }
 
-        .rates-table td {
-            font-weight: 600;
+        .modal-btn.secondary {
+            background: #2a3942;
         }
+
+        #fileInput { display: none; }
     </style>
 </head>
 <body>
 
-    <div class="container">
-        <header>
-            <h1>منصة سعر الصرف</h1>
-            <p class="subtitle">مصمم بنظام تفاعلي فائق السرعة</p>
-        </header>
+    <div class="phone-frame">
+        <!-- الجزيرة التفاعلية -->
+        <div class="dynamic-island"></div>
 
-        <div class="card">
-            <div class="card-title">📊 منصة سعر الصرف</div>
+        <!-- رأس الشاشة -->
+        <div class="app-header">
+            <div class="user-info">
+                <div class="avatar">أ</div>
+                <div>
+                    <h4 style="font-size: 1rem;">أحمد علي</h4>
+                    <span style="font-size: 0.75rem; color: var(--accent-color);">متصل الآن</span>
+                </div>
+            </div>
+            <div class="header-actions">
+                <i class="fas font-solid fa-phone" title="مكالمة صوتية" onclick="startCall('audio')"></i>
+                <i class="fas font-solid fa-video" title="مكالمة فيديو" onclick="startCall('video')"></i>
+                <i class="fas font-solid fa-user-plus" title="رابط دعوة" onclick="toggleInviteModal(true)"></i>
+            </div>
+        </div>
+
+        <!-- منطقة الرسائل -->
+        <div class="chat-container" id="chatContainer">
+            <div class="message incoming">
+                مرحباً! مرحباً بك في التطبيق. يمكنك تجربة إرسال الصور، الفيديوهات، الملفات، أو إجراء مكالمة الآن.
+                <span class="time">10:00 ص</span>
+            </div>
+        </div>
+
+        <!-- شريط الإدخال -->
+        <div class="input-bar">
+            <button class="icon-btn" onclick="document.getElementById('fileInput').click()">
+                <i class="fas fa-paperclip"></i>
+            </button>
+            <input type="file" id="fileInput" onchange="handleFileUpload(event)">
+
+            <div class="input-container">
+                <input type="text" id="messageInput" placeholder="اكتب رسالة..." onkeypress="handleKeyPress(event)">
+            </div>
+
+            <button class="send-btn" onclick="sendMessage()">
+                <i class="fas fa-paper-plane"></i>
+            </button>
+        </div>
+
+        <!-- واجهة المكالمة (صوت / فيديو) -->
+        <div class="call-screen" id="callScreen">
+            <video id="remoteVideo" class="video-container" autoplay playsinline></video>
             
-            <div class="input-group">
-                <div class="field">
-                    <label>من عملة:</label>
-                    <select id="baseCurrency" onchange="convert()">
-                        <option value="USD">دولار أمريكي ($)</option>
-                        <option value="IQD">دينار عراقي</option>
-                        <option value="TRY">ليرة تركية</option>
-                    </select>
-                </div>
-                <div class="field">
-                    <label>المبلغ المراد تحويله:</label>
-                    <input type="number" id="amount" value="1" oninput="convert()">
-                </div>
+            <div id="callHeader">
+                <div class="call-user-avatar" id="callAvatar">أ</div>
+                <h3 id="callUserName" style="color: white; margin-bottom: 5px;">أحمد علي</h3>
+                <p id="callStatus" style="color: var(--accent-color);">جاري الاتصال...</p>
+                <p id="callTimer" style="color: white; font-size: 0.9rem; margin-top: 5px; display: none;">00:00</p>
             </div>
 
-            <div class="results-grid">
-                <div class="res-box">
-                    <div class="currency-name">دينار عراقي</div>
-                    <div class="currency-val" id="resIQD">1,499</div>
-                </div>
-                <div class="res-box">
-                    <div class="currency-name">ليرة سورية</div>
-                    <div class="currency-val" id="resSYP">133</div>
-                </div>
-                <div class="res-box">
-                    <div class="currency-name">ليرة تركية</div>
-                    <div class="currency-val" id="resTRY">47.21</div>
-                </div>
+            <div class="call-controls">
+                <button class="call-btn" id="muteBtn" onclick="toggleMute()">
+                    <i class="fas fa-microphone"></i>
+                </button>
+                <button class="call-btn" id="camBtn" style="display:none;" onclick="toggleCamera()">
+                    <i class="fas fa-video"></i>
+                </button>
+                <button class="call-btn end-call" onclick="endCall()">
+                    <i class="fas fa-phone-slash"></i>
+                </button>
             </div>
         </div>
 
-        <div class="card">
-            <div class="card-title">⚙️ أسعار الصرف (مقابل 1 دولار)</div>
-            <div class="results-grid">
-                <div class="res-box">
-                    <div class="currency-name">الدينار العراقي</div>
-                    <div class="currency-val">1499</div>
+        <!-- نافذة رابط الدعوة -->
+        <div class="modal-overlay" id="inviteModal">
+            <div class="modal">
+                <h3>رابط دعوة خاص</h3>
+                <p style="font-size: 0.85rem; color: var(--text-secondary); margin-top: 5px;">هذا الرابط مخصص لشخص واحد فقط ويمكنك تغييره في أي وقت.</p>
+                <div class="link-box" id="inviteLinkText">https://app.connect/invite?token=8f9a2b1c</div>
+                <div>
+                    <button class="modal-btn" onclick="copyInviteLink()"><i class="fas fa-copy"></i> نسخ الرابط</button>
+                    <button class="modal-btn secondary" onclick="regenerateInviteLink()"><i class="fas fa-sync"></i> تغيير الرابط</button>
                 </div>
-                <div class="res-box">
-                    <div class="currency-name">الليرة السورية</div>
-                    <div class="currency-val">133</div>
-                </div>
-                <div class="res-box">
-                    <div class="currency-name">الليرة التركية</div>
-                    <div class="currency-val">47.21</div>
-                </div>
+                <br>
+                <button class="modal-btn secondary" style="width: 100%;" onclick="toggleInviteModal(false)">إغلاق</button>
             </div>
         </div>
 
-        <div class="card">
-            <div class="card-title">📋 جدول المقارنة المباشر</div>
-            <table class="rates-table">
-                <thead>
-                    <tr>
-                        <th>الأساسية</th>
-                        <th>دولار</th>
-                        <th>عراقي</th>
-                        <th>سوري</th>
-                        <th>تركي</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <tr>
-                        <td>1 دولار</td>
-                        <td>1</td>
-                        <td>1,499</td>
-                        <td>133</td>
-                        <td>47.21</td>
-                    </tr>
-                </tbody>
-            </table>
-        </div>
     </div>
 
     <script>
-        // أسعار الصرف المرجعية مقابل الدولار الأمريكي
-        const rates = {
-            USD: 1,
-            IQD: 1499,
-            SYP: 133,
-            TRY: 47.21
-        };
+        // المتغيرات العامة
+        let localStream = null;
+        let isMuted = false;
+        let isCamOff = false;
+        let callTimerInterval = null;
+        let secondsElapsed = 0;
 
-        function convert() {
-            let amount = parseFloat(document.getElementById('amount').value) || 0;
-            let base = document.getElementById('baseCurrency').value;
+        // إرسال النص
+        function sendMessage() {
+            const input = document.getElementById('messageInput');
+            const text = input.value.trim();
+            if (!text) return;
 
-            // تحويل المبلغ المدخل إلى دولار أولاً
-            let amountInUSD = amount / rates[base];
+            appendMessage(text, 'outgoing');
+            input.value = '';
+        }
 
-            // حساب القيم للعملات الأخرى
-            let iqd = amountInUSD * rates.IQD;
-            let syp = amountInUSD * rates.SYP;
-            let tryVal = amountInUSD * rates.TRY;
+        function handleKeyPress(e) {
+            if (e.key === 'Enter') sendMessage();
+        }
 
-            // عرض النواتج منسقة
-            document.getElementById('resIQD').innerText = iqd.toLocaleString('en-US', {maximumFractionDigits: 0});
-            document.getElementById('resSYP').innerText = syp.toLocaleString('en-US', {maximumFractionDigits: 0});
-            document.getElementById('resTRY').innerText = tryVal.toLocaleString('en-US', {maximumFractionDigits: 2});
+        // إضافة رسالة للواجهة
+        function appendMessage(content, type, isMedia = false) {
+            const chat = document.getElementById('chatContainer');
+            const msgDiv = document.createElement('div');
+            msgDiv.className = `message ${type}`;
+            
+            const timeStr = new Date().toLocaleTimeString('ar-EG', { hour: '2-digit', minute: '2-digit' });
+            
+            if (isMedia) {
+                msgDiv.innerHTML = content + `<span class="time">${timeStr}</span>`;
+            } else {
+                msgDiv.innerText = content;
+                const timeSpan = document.createElement('span');
+                timeSpan.className = 'time';
+                timeSpan.innerText = timeStr;
+                msgDiv.appendChild(timeSpan);
+            }
+
+            chat.appendChild(msgDiv);
+            chat.scrollTop = chat.scrollHeight;
+        }
+
+        // رفع وإرسال ملفات/صور/فيديو/صوت
+        function handleFileUpload(event) {
+            const file = event.target.files[0];
+            if (!file) return;
+
+            const fileURL = URL.createObjectURL(file);
+            let content = '';
+
+            if (file.type.startsWith('image/')) {
+                content = `<img src="${fileURL}" class="media-preview-img" alt="صورة">`;
+            } else if (file.type.startsWith('video/')) {
+                content = `<video src="${fileURL}" controls class="media-preview-video"></video>`;
+            } else if (file.type.startsWith('audio/')) {
+                content = `<audio src="${fileURL}" controls></audio>`;
+            } else {
+                content = `
+                    <a href="${fileURL}" download="${file.name}" class="file-attachment">
+                        <i class="fas fa-file-alt font-size: 1.5rem;"></i>
+                        <div>
+                            <div style="font-weight:bold;">${file.name}</div>
+                            <div style="font-size:0.75rem;">${(file.size/1024).toFixed(1)} KB</div>
+                        </div>
+                    </a>`;
+            }
+
+            appendMessage(content, 'outgoing', true);
+            event.target.value = ''; // إعادة تعيين
+        }
+
+        // بدء المكالمة
+        async function startCall(type) {
+            const callScreen = document.getElementById('callScreen');
+            const callStatus = document.getElementById('callStatus');
+            const remoteVideo = document.getElementById('remoteVideo');
+            const avatar = document.getElementById('callAvatar');
+            const camBtn = document.getElementById('camBtn');
+
+            callScreen.classList.add('active');
+            callStatus.innerText = "جاري الاتصال...";
+            
+            if (type === 'video') {
+                camBtn.style.display = 'flex';
+                avatar.style.display = 'none';
+            } else {
+                camBtn.style.display = 'none';
+                avatar.style.display = 'flex';
+            }
+
+            try {
+                // طلب صلاحية الكاميرا والميكروفون
+                const constraints = { audio: true, video: type === 'video' };
+                localStream = await navigator.mediaDevices.getUserMedia(constraints);
+                
+                if (type === 'video') {
+                    remoteVideo.srcObject = localStream;
+                }
+
+                callStatus.innerText = "في المكالمة";
+                startTimer();
+            } catch (err) {
+                console.log("تعذر الوصول للكاميرا/المايك:", err);
+                callStatus.innerText = "مكالمة نشطة (محاكاة)";
+                startTimer();
+            }
+        }
+
+        // عداد وقت المكالمة
+        function startTimer() {
+            const timerElem = document.getElementById('callTimer');
+            timerElem.style.display = 'block';
+            secondsElapsed = 0;
+            
+            callTimerInterval = setInterval(() => {
+                secondsElapsed++;
+                const mins = String(Math.floor(secondsElapsed / 60)).padStart(2, '0');
+                const secs = String(secondsElapsed % 60).padStart(2, '0');
+                timerElem.innerText = `${mins}:${secs}`;
+            }, 1000);
+        }
+
+        // كتم / تشغيل الصوت
+        function toggleMute() {
+            isMuted = !isMuted;
+            const muteBtn = document.getElementById('muteBtn');
+            
+            if (localStream && localStream.getAudioTracks().length > 0) {
+                localStream.getAudioTracks()[0].enabled = !isMuted;
+            }
+
+            if (isMuted) {
+                muteBtn.classList.add('muted');
+                muteBtn.innerHTML = '<i class="fas fa-microphone-slash"></i>';
+            } else {
+                muteBtn.classList.remove('muted');
+                muteBtn.innerHTML = '<i class="fas fa-microphone"></i>';
+            }
+        }
+
+        // إيقاف / تشغيل الكاميرا
+        function toggleCamera() {
+            isCamOff = !isCamOff;
+            const camBtn = document.getElementById('camBtn');
+
+            if (localStream && localStream.getVideoTracks().length > 0) {
+                localStream.getVideoTracks()[0].enabled = !isCamOff;
+            }
+
+            if (isCamOff) {
+                camBtn.classList.add('muted');
+                camBtn.innerHTML = '<i class="fas fa-video-slash"></i>';
+            } else {
+                camBtn.classList.remove('muted');
+                camBtn.innerHTML = '<i class="fas fa-video"></i>';
+            }
+        }
+
+        // إنهاء المكالمة
+        function endCall() {
+            const callScreen = document.getElementById('callScreen');
+            const remoteVideo = document.getElementById('remoteVideo');
+
+            if (localStream) {
+                localStream.getTracks().forEach(track => track.stop());
+                localStream = null;
+            }
+
+            remoteVideo.srcObject = null;
+            clearInterval(callTimerInterval);
+            document.getElementById('callTimer').style.display = 'none';
+            callScreen.classList.remove('active');
+            
+            // إعادة ضبط أزرار التحكم
+            isMuted = false;
+            isCamOff = false;
+            document.getElementById('muteBtn').classList.remove('muted');
+            document.getElementById('muteBtn').innerHTML = '<i class="fas fa-microphone"></i>';
+            document.getElementById('camBtn').classList.remove('muted');
+            document.getElementById('camBtn').innerHTML = '<i class="fas fa-video"></i>';
+        }
+
+        // إدارة رابط الدعوة
+        function toggleInviteModal(show) {
+            document.getElementById('inviteModal').style.display = show ? 'flex' : 'none';
+        }
+
+        function regenerateInviteLink() {
+            const randomToken = Math.random().toString(36).substring(2, 10);
+            const newLink = `https://app.connect/invite?token=${randomToken}`;
+            document.getElementById('inviteLinkText').innerText = newLink;
+        }
+
+        function copyInviteLink() {
+            const linkText = document.getElementById('inviteLinkText').innerText;
+            navigator.clipboard.writeText(linkText);
+            alert("تم نسخ رابط الدعوة بنجاح!");
         }
     </script>
 </body>
